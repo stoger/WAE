@@ -1,0 +1,47 @@
+<head>
+	<meta charset="UTF-8" />
+	<title>A mans Blog | Sport, Tech, World News</title>
+	<link href="static/css/dropdown.css" media="screen" rel="stylesheet" type="text/css">
+	<link href="static/css/default.css" media="screen" rel="stylesheet" type="text/css">
+	<link href="static/css/smoothness/jquery-ui-1.10.3.custom.min.css" media="screen" rel="stylesheet" type="text/css">
+	<link href="static/css/style.css" rel="stylesheet" type="text/css">
+	<!--[if IE]>
+		<script src="static/js/html5.js"></script>
+	<![endif]-->
+	<!--[if IE 6]>
+		<script src="static/js/belatedPNG.js"></script>
+		<script>
+			DD_belatedPNG.fix('*');
+		</script>
+	<![endif]-->
+	<script src="static/js/jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="static/js/jquery-ui-1.10.3.custom.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="static/js/jquery.validate.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="static/js/loopedslider.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/static/js/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(function(){
+			$('#slider').loopedSlider({
+				autoStart: 6000,
+				restart: 5000
+			});
+		});
+	</script>
+	<script>
+		var ids = [];
+		var blurfocus = function(id){
+		  document.getElementById(id).onfocus = function(){
+		    if(!ids[id]){ ids[id] = { id : id, val : this.value, active : false }; }
+		    if(this.value == ids[id].val){
+				  this.value = "";
+				}
+	  	};
+			document.getElementById(id).onblur = function(){
+	    	if(this.value == ""){
+		  		this.value = ids[id].val;
+				}
+	  	}
+		}
+	</script>
+	<script src="static/js/functions.js" type="text/javascript" charset="utf-8"></script>
+</head>

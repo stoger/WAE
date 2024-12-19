@@ -1,0 +1,43 @@
+<ul id="nav" class="dropdown dropdown-horizontal">
+	<li><a href="index">Home</a></li>
+
+% foreach my $category (@categories) {
+	<%perl>
+		my $dbh = Ws24::DBI->dbh();
+		my $sth = $dbh->prepare("SELECT article_id, title, category_id, user_id, excerpt, content, status, timestamp from group99_article WHERE category_id = $category->{category_id} ORDER by timestamp desc");
+		$sth->execute();
+  	my @articles;
+		while (my $hr = $sth->fetchrow_hashref) {
+    	push(@articles, $hr);
+		}
+	</%perl>
+
+	<li class="dir"><% $category->{'title'} %>
+	<ul>
+% foreach my $article (@articles) {
+	<li><a href="readArticle?article_id=<% $article->{article_id} %>"><% $article->{title} %></a></li>
+% }
+	</ul>
+% }
+
+% if (defined $m->session->{user_id} && $m->session->{user_id} > 0) {
+	<li><a href="insert">Insert</a></li>
+	<li><a href="logout">Logout</a></li>
+% } else {
+	<li><a href="login">Login</a></li>
+% }
+	<li><a href="about">Contact</a></li>
+
+</ul>
+
+
+<%init>
+#  push(@{$m->session->{comp}}, { 'path' => $.cmeta->path, 'access_time' => time });
+	my $dbh = Ws24::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT category_id, title FROM group99_category");
+	$sth->execute();
+  my @categories;
+  while (my $hr = $sth->fetchrow_hashref) {
+    push(@categories, $hr);
+	}
+</%init>

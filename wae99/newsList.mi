@@ -1,0 +1,54 @@
+<%class>
+	has 'category_id';
+  has 'search';
+</%class>
+
+% foreach my $article (@articles) {
+<article class="post">
+	<header>
+		<h3><% $article->{article_id} %>.	<% $article->{title} %></h3>
+
+% if (defined $m->session->{user_id} && $m->session->{user_id} > 0) {
+		<a href="insert?article_id=<% $article->{'article_id'} %>" class="classname">Modify</a>
+		<a href="article/delete?article_id=<% $article->{'article_id'} %>" class="classname">Delete</a>
+% }
+		<p class="postinfo"> Published in <b><& fetchCategory.mi, category_id => $article->{category_id} &></b> on <% $article->{timestamp} %> </p>
+	</header>
+
+	<p><% $article->{excerpt} %></p>
+	<footer>
+		<span class="author">Written by <& fetchAuthor.mi, user_id => $article->{user_id} &></span>
+		<span class="permalink"><a href="readArticle?article_id=<% $article->{article_id} %>"><b>Read Full</b></a></span>
+		<span class="comments"><a href="javascript:void(0)" onclick="showComments(<% $article->{article_id} %>);"><& countcomments.mi, article_id=>$article->{article_id} &> Comment(s)</a></span>
+	</footer>
+	<& comments.mi, article_id => $article->{article_id} &>
+</article>
+% }
+
+<%init>
+	my $dbh = Ws24::DBI->dbh();
+	my $sth;
+  my @articles;
+
+	if (!defined $.category_id) {
+    if (!defined $.search) {
+    	$sth = $dbh->prepare("SELECT article_id, title, category_id, user_id, excerpt, content, status, timestamp FROM group99_article order by timestamp desc");
+    	$sth->execute();
+    } else {
+			$sth = $dbh->prepare("SELECT article_id, title, category_id, user_id, excerpt, content, status, timestamp FROM group99_article where content like ? order by timestamp desc");
+			$sth->execute('%%'.$.search.'%%');
+    }
+  } else {
+    if (!defined $.search) {
+    	$sth = $dbh->prepare("SELECT article_id, title, category_id, user_id, excerpt, content, status, timestamp FROM group99_article where category_id=? order by timestamp desc");
+    	$sth->execute($.category_id);
+    } else {
+			$sth = $dbh->prepare("SELECT article_id, title, category_id, user_id, excerpt, content, status, timestamp FROM group99_article where category_id=? and content like ? order by timestamp desc");
+			$sth->execute($.category_id, '%%'.$.search.'%%');
+    }
+  }
+
+  while (my $hr = $sth->fetchrow_hashref) {
+    push(@articles, $hr);
+  }
+</%init>

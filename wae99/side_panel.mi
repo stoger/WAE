@@ -1,0 +1,11 @@
+<section id="sidebar">
+	<div id="sidebarwrap">
+		<h2>About A man's Blog.</h2>
+		<p>News for engineering students from engineering students. Sport, Tech and still a bit of worldwide news for the culture. <a href="about">Contact</a></p>
+
+		<& categories.mi &>
+		<& latestPosts.mi &>
+
+	</div>
+</section>
+

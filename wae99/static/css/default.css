@@ -1,0 +1,60 @@
+/**
+ * Default CSS Drop-Down Menu Theme
+ *
+ * @link		http://www.lwis.net/
+ * @copyright	2008 Live Web Institute
+ */
+
+ul.dropdown {font-weight: bold;}
+ul.dropdown li {padding: 6px 10px;border-style: solid;border-width: 1px 1px 1px 0;border-color: #fff #d9d9d9 #d9d9d9;background-color: #f6f6f6; color: #000;}
+ul.dropdown li.hover,ul.dropdown li:hover { background-color: #eee; color: #000;}
+ul.dropdown a:link,
+ul.dropdown a:visited	{ color: #000; text-decoration: none; }
+ul.dropdown a:hover		{ color: #000; }
+ul.dropdown a:active	{ color: #ffa500; }
+
+ul.dropdown ul {width: 150px;margin-top: 1px;}
+ul.dropdown ul li { font-weight: normal;}
+ul.dropdown *.dir {padding-right: 20px;}
+ul.dropdown-horizontal ul *.dir {padding-right: 15px;background-image: url(static/images/nav-arrow-right.png);background-position: 100% 50%;background-repeat: no-repeat;}
+ul.dropdown-upward *.dir {background-image: url(static/images/nav-arrow-top.png);}
+ul.dropdown-vertical *.dir,
+ul.dropdown-upward ul *.dir {background-image: url(static/images/nav-arrow-right.png);}
+ul.dropdown-vertical-rtl *.dir {padding-right: 10px;padding-left: 15px;background-image: url(static/images/nav-arrow-left.png);background-position: 0 50%;}
+
+.classname {
+	-moz-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
+	box-shadow:inset 0px 1px 0px 0px #bbdaf7;
+	background-color:#79bbff;
+	-webkit-border-top-left-radius:8px;
+	-moz-border-radius-topleft:8px;
+	border-top-left-radius:8px;
+	-webkit-border-top-right-radius:8px;
+	-moz-border-radius-topright:8px;
+	border-top-right-radius:8px;
+	-webkit-border-bottom-right-radius:8px;
+	-moz-border-radius-bottomright:8px;
+	border-bottom-right-radius:8px;
+	-webkit-border-bottom-left-radius:8px;
+	-moz-border-radius-bottomleft:8px;
+	border-bottom-left-radius:8px;
+	text-indent:0;
+	border:1px solid #84bbf3;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:12px;
+	font-weight:bold;
+	font-style:normal;
+	height:20px;
+	line-height:20px;
+	width:50px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #528ecc;
+}.classname:hover {
+	background-color:#378de5;
+}.classname:active {
+	position:relative;
+	top:1px;

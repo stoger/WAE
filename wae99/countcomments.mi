@@ -1,0 +1,12 @@
+<%class>
+  has 'article_id' => (required => 1);
+</%class>
+
+<% $count  %>
+
+<%init>
+	my $dbh = Ws24::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT count(*) as count_comments from group99_comment where article_id = ".$.article_id);
+	$sth->execute();
+  my $count = $sth->fetchrow_hashref->{'count_comments'};
+</%init>

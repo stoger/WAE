@@ -1,0 +1,15 @@
+<h2>Sort by categories</h2>
+<ul class="categories">
+% foreach my $category (@categories) {
+  <li><a href="index?category_id=<% $category->{'category_id'} %>"><% $category->{'title'} %></a></li>
+% }
+</ul>
+<%init>
+	my $dbh = Ws24::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT category_id, title from group99_category");
+	$sth->execute();
+  my @categories;
+  while (my $hr = $sth->fetchrow_hashref) {
+    push(@categories, $hr);
+  }
+</%init>

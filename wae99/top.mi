@@ -1,0 +1,29 @@
+<%class>
+	has 'category_id';
+</%class>
+
+<div id="bodywrap">
+	<h2><& menu.mi &></h2>
+
+	<section id="pagetop">
+		<nav id="sitenav">
+		</nav>
+	</section>
+
+	<header id="pageheader">
+		<h1>
+		A man's<span> Blog. (session <% $m->session->{user_id} %>)</span>
+		</h1>
+% # push(@{$m->session->{comp}}, { 'path' => $.cmeta->path, 'access_time' => time });
+		<div id="search">
+			<form action="index" method="get">
+				<div class="searchfield">
+					<input type="hidden" name="category_id" value="<% $.category_id %>" />
+					<input type="text" name="search" id="s" />
+				</div>
+				<div class="searchbtn">
+					<input type="image" src="static/images/searchbtn.png" alt="search">
+				</div>
+			</form>
+		</div>
+	</header>

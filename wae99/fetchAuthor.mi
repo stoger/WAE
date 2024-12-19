@@ -1,0 +1,16 @@
+<%class>
+	has 'user_id' => (required => 1);
+</%class>
+
+<% $articles[0]->{'username'} %>
+
+<%init>
+	my $user = $.user_id;
+	my $dbh = Ws24::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT username from group99_user where user_id = $user");
+	$sth->execute();
+  my @articles;
+  while (my $hr = $sth->fetchrow_hashref) {
+    push(@articles, $hr);
+  }
+</%init>

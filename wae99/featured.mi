@@ -1,0 +1,27 @@
+<section id="featured">
+	<h2 class="ftheading">Featured</h2>
+	<div class="ftwrap">
+		<div class="ftimg">
+			<img src="static/images/img1.jpg" width="204" height="128" alt="img1">
+		</div>
+		<div class="fttxt">
+			<h3><% $article->{'title'} %></h3>
+% my $excerpt = join ' ', (split /\s+/, $article->{'excerpt'} )[0..15];
+% $excerpt =~ s/<.+?>//g;
+% $excerpt = $excerpt . '[...]';
+			<p><% $excerpt %></p>
+		</div>
+	</div>
+</section>
+
+
+<%init>
+	my $dbh = Ws24::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT article_id, title, category_id, user_id, excerpt, content, status, timestamp FROM group99_article order by timestamp desc");
+	$sth->execute();
+	my @articles;
+	while (my $hr = $sth->fetchrow_hashref) {
+		push(@articles, $hr);
+	}
+	my $article = $articles[0];
+</%init>

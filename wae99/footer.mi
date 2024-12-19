@@ -1,0 +1,16 @@
+<footer id="pagefooter">
+	<div id="footerwrap">
+		<div class="copyright">
+			2019 &copy; Special Group of WEng <!--Aljaz D. & Thomas D.-->
+		</div>
+
+		<div class="credit">
+			<a href="http://www.tuwien.at/" title="tuwien">TU Wien - </a>Web Application Engineering
+		</div>
+		<div>Session history:
+% #foreach my $entry (sort @{$m->session->{comp}}) {
+% #  Komponente: <% $entry->{'path'} %> wurde hinzugefügt um <% scalar(localtime($entry->{'access_time'})) %> <br/>
+% #}
+</div>
+	</div>
+</footer>

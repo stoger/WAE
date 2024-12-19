@@ -1,0 +1,18 @@
+<h2>Latest Posts</h2>
+<ul>
+% foreach my $article (@articles) {
+  <li><a href="readArticle?article_id=<% $article->{'article_id'} %>"><% $article->{'title'} %></a></li>
+% }
+</ul>
+<%init>
+	my $dbh = Ws24::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT article_id, title from group99_article order by timestamp desc limit 5");
+	$sth->execute();
+  my @articles;
+  my $i = 0;
+  while (my $hr = $sth->fetchrow_hashref) {
+    $i = $i + 1;
+    push(@articles, $hr);
+    if ($i > 4) { last; }
+}
+</%init>

@@ -1,0 +1,62 @@
+<%class>
+	has 'article_id' => (required => 1);
+</%class>
+
+<section id="comments-<% $.article_id %>" style="display:none">
+<div class="commentlist">
+% foreach my $comment (@comments) {
+
+<article class="entry">
+% if (defined $m->session->{user_id} && $m->session->{user_id} > 0) {
+  <a href="readArticle?article_id=<% $.article_id %>&comment_id=<% $comment->{'comment_id'} %>" style="float:right" class="classname" style="float: right">Delete</a>
+% }
+
+<div class="avatar">
+<img src="static/images/avatar.png">
+<p class="author">
+<span class="name"><a href="javascript:void(0)"><% $comment->{'user'} %></a></span>
+<time class="date"><% $comment->{'timestamp'} %></time>
+
+</p>
+</div>
+<div class="comment">
+
+<p><% $comment->{'comment'} %></p>
+
+</div>
+<div class="clear"></div>
+</article>
+% }
+
+</div>
+ <h3 id="respond">Leave a Reply</h3>
+<form id="commentform" method="post" action="readArticle">
+   <p class="textfield">
+       <input type="text" tabindex="1" size="22" value="" id="user" name="user">
+          <label for="user">
+             <small>Name (required)</small>
+          </label>
+   </p>
+   <p>
+   </p>
+   <p class="text-area">
+       <textarea tabindex="4" rows="10" cols="50" id="comment" name="comment"></textarea>
+   </p>
+   <p>
+       <input type="image" src="static/images/submit.png" tabindex="5" id="submit" name="submit">
+       <input type="hidden" value="<% $.article_id %>" name="article_id">
+   </p>
+   <div class="clear"></div>
+</form>
+</section>
+
+
+<%init>
+	my $dbh = Ws24::DBI->dbh();
+	my $sth = $dbh->prepare("SELECT comment_id, article_id, comment, timestamp, user from group99_comment where article_id=".$.article_id." order by timestamp desc");
+	$sth->execute();
+  my @comments;
+  while (my $hr = $sth->fetchrow_hashref) {
+    push(@comments, $hr);
+  }
+</%init>
