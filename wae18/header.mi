@@ -1,0 +1,60 @@
+<%class>
+  has 'authed';
+</%class>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="static/css/header.css">
+</head>
+
+<script>
+window.addEventListener("load", function() {
+	$(".app-title").on("click", function (item) {
+		const loc = window.location;
+		window.location.replace(`${loc.protocol}//${loc.host}/wae18/`);
+	});
+	
+	if (<% defined $.authed && $.authed == 0 ? 1 : 0 %>) {
+		$("#login-btn").show();
+		$("#logout-btn").hide();
+		$("#edit-btn").hide();
+	} else {
+		$("#login-btn").hide();
+		$("#logout-btn").show();
+		$("#edit-btn").show();
+	}
+});
+
+/* Set the width of the side navigation to 250px */
+function openNav() {
+  document.getElementById("mySidenav").style.width = "350px";
+}
+
+/* Set the width of the side navigation to 0 */
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+
+/* click-handler to close sidebar nav on outside click */
+$(document).on("click", function (elem) {
+    if ($("#mySidenav").css("width") !== "0px") {
+        if (elem.target.id !== "mySidenav") {
+            $("#mySidenav").width(0);                
+        }
+    }
+});
+</script>
+<div class="flex-around heading">
+	<div class="flex-item">
+		<!-- menu or something goes here -->
+		<& menu.mi &>
+		<div class="icon-wrapper" onclick="openNav()"><image class="menu-icon" src="static/images/menu.png" alt="menu" /></div>
+	</div>
+	<div class="flex-item">
+		<p class="app-title">2Blog</p>
+	</div>
+	<div class="flex-item">
+		<!-- other menu? idk, keep even if empty for spacing reasons -->
+		 <!--<p>test</p>-->
+        <span>&nbsp;</span>
+	</div>
+</div>

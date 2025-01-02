@@ -1,0 +1,68 @@
+<%class>
+    has 'user';
+    has 'cid';
+</%class>
+
+<div class="post-container">
+% foreach my $post (@posts) {
+    <div class="card">
+        <div class="post-header">
+            <h2 class="post-title"><% $post->{'title'} %></h2>
+            <span class="post-category"><% $post->{'categoryname'} || 'Unbekannt' %></span>
+        </div>
+        <p class="post-meta">
+            Gepostet von <% $post->{'username'} || 'Unbekannt' %> am <% $post->{'last_edited'} || 'unbekannt' %>   
+        </p>
+        <p class="post-text"><% substr($post->{'content'} =~ s/<[^>]*>//gr, 0, 100) %>...</p>
+        <a href="/wae18/readPost?post_id=<% $post->{'id'} %>">Weiterlesen</a>
+    </div>
+% }
+</div>
+
+
+
+<%init>
+    # Datenbankabfrage mit JOINs vorbereiten
+    my $stmt = qq{
+    SELECT 
+        posts.id,
+        posts.title,
+        posts.content,
+        posts.last_edited,
+        users.username,
+        categories.name AS categoryname
+    FROM group18_posts AS posts
+    LEFT JOIN group18_user AS users
+        ON posts.user_id = users.id
+    LEFT JOIN group18_categories AS categories
+        ON posts.category_id = categories.id
+};
+
+    # WHERE-Bedingungen hinzufügen, falls nötig
+    my @conditions;
+    my @params;
+    if ($.user != 0) {
+        push @conditions, "posts.user_id = ?";
+        push @params, $.user;
+    }
+    if ($.cid != 0) {
+        push @conditions, "posts.category_id = ?";
+        push @params, $.cid;
+    }
+    if (@conditions) {
+        $stmt .= " WHERE " . join(" AND ", @conditions);
+    }
+
+    # $stmt .= " ORDER BY posts.last_edited DESC;"; # Optional: Sortierung hinzufügen
+    
+    # Abfrage ausführen
+    my $dbh = Ws24::DBI->dbh();
+    my $sth = $dbh->prepare($stmt);
+    $sth->execute(@params);
+
+    # Ergebnisse holen
+    my @posts;
+    while (my $hr = $sth->fetchrow_hashref) {
+        push(@posts, $hr);
+    }
+</%init>

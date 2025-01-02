@@ -1,4 +1,11 @@
-<%class>
-has 'grp';
-</%class>
-<div>This page by WAE group <% $.grp %>;</div>
+<div class="footer-container">
+	<div class="flex-item">
+		<p class="stretch">&nbsp;</p>
+	</div>
+	<div class="flex-item">
+		<p class="stretch">&#169; Group 18</p>
+	</div>
+	<div class="flex-item">
+		<p class="stretch">WAE&CM WS2024</p>
+	</div>
+</div>

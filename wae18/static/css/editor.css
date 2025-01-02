@@ -1,0 +1,61 @@
+form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    font-size: 14px;
+    color: #333;
+    appearance: none;
+    cursor: pointer;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"%3E%3Cpath d="M7 10l5 5 5-5z"/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+form select:hover {
+    border-color: #007BFF;
+}
+
+form select:focus {
+    outline: none;
+    border-color: #007BFF;
+    background-color: #fff;
+}
+
+form input[name="title"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f8f8f8;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+form input[name="title"]:focus {
+    border-color: #007BFF;
+    background-color: #fff;
+    outline: none;
+}
+
+
+.editor-wrapper {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 10px;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+form[name="editform"] {
+    width: 100%; /* Nimmt die gesamte verfügbare Breite ein */
+    max-width: 1200px; /* Optional: Begrenzung auf eine maximale Breite */
+    margin: 0 auto; /* Zentriert das Formular */
+    padding: 10px; /* Fügt Innenabstand hinzu */
+}
+

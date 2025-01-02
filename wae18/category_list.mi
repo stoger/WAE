@@ -1,0 +1,162 @@
+<%class>
+    has 'categories'    => (
+        is          => 'ro',
+        required    => 1   
+    );
+    has 'cb_url'        => (
+        is          => 'ro',
+        required    => 1
+    );
+</%class>
+
+<div class="md-chips category-container">
+% foreach my $cat (@{$.categories}) {
+    <div class="md-chip md-chip-clickable" onclick="handleClick(<% $cat->{id} %>)" id="category-<% $cat->{id} %>">
+        <% $cat->{name} %>
+    </div>
+% }
+    <div class="md-chip md-chip-clickable md-chip-primary" onclick="filterItems()">&#10004;</div>
+</div>
+
+<script>
+    // helper
+    function getFromStorage() {
+        var stored = JSON.parse(window.sessionStorage.getItem("cat-selection"));
+        var value = []; 
+        if (stored !== null && "item" in stored) {
+            value = stored["item"];
+        }
+
+        return value;
+    }
+
+    function filterTags(data) {
+        return data.replace(/<[^>]*>/g, '');
+    }
+
+    function generatePostHtml(item) {
+        const card_div = $('<div>', {
+           class: 'card',
+        }).hide(); 
+
+        const post_header = $('<div>', {
+            class: 'post-header'    
+        });
+
+        const post_title = $('<h2>', {
+            class: 'post-title',
+            text: item.title.trim()
+        });
+
+        const post_category = $('<span>', {
+            class: 'post-category',
+            text: item.categoryname.trim()
+        });
+
+        post_header.append(post_title);
+        post_header.append(post_category);
+
+        const post_meta = $('<p>', {
+            class: 'post-meta',
+            text: `Geposted von ${item.username} am ${item.last_edited}`
+        });
+
+        const post_text = $('<p>', {
+            class: 'post-text',
+            text: `${filterTags(item.content).substring(0, 100)} ...`
+        });
+
+        const full_href = $('<a>', {
+            href: `/wae18/readPost?post_id=${item.id}`,
+            text: "Weiterlesen"
+        })
+
+        card_div.append(post_header);
+        card_div.append(post_meta);
+        card_div.append(post_text);
+        card_div.append(full_href);
+
+        return card_div[0];
+    }
+
+    function updatePage(items) {
+        const parent = $(".post-container"); 
+
+        // delete old items
+        $(".post-container").children().each((idx, elem) => $(elem).delay(100).fadeOut(500));
+        $(".post-container").empty();
+        
+        setTimeout(function () {
+            console.log("gonna update to new values", items);
+            items.forEach(x => $(".post-container").append(x));
+            $(".post-container").children().each((i, e) => $(e).delay(i * 100).fadeIn(500));
+        }, 500);
+    }
+
+    // submit category filter to server
+    async function filterItems() {
+        const value = getFromStorage(); 
+        const callback = "<% $.cb_url %>";
+        // TODO: rethink this, atm we cannot search
+        console.log("should request items in categories", value, callback);
+        const params = new URLSearchParams();
+        params.append("filter", value.join(","));
+
+        const result = await fetch(`${callback}?${params.toString()}`, {
+            method: "GET",
+            redirect: "follow"
+        });
+        
+        if (!result.ok) {
+            console.error("something went wrong", result);  
+            const loc = window.location;
+            window.location.replace(`${window.location.href}?msg=Kategoriefilter+konnten+nicht+angewendet+werden.<br>Bitte+versuchen+Sie+es+später+erneut.`);
+            return;
+        }
+        const data = await result.json();
+        for (let elem of data) {
+            console.log(elem);
+            //generatePostHtml(elem);
+        }
+
+        const htmlData = data.map(generatePostHtml);
+        console.log(htmlData);
+        updatePage(htmlData);
+        //console.log(data);
+    }
+
+    // track selected categories
+    function handleClick(id) {
+        var value = getFromStorage();
+        const elem = document.getElementById(`category-${id}`);
+
+        if (value.includes(id)) {
+            const idx = value.indexOf(id);
+            // remove item
+            value.splice(idx, 1);
+            if (elem) {
+                elem.classList.remove("md-chip-highlighted");
+            }
+        } else {
+            value.push(id);
+            if (elem) {
+                elem.classList.add("md-chip-highlighted");
+            }
+        }
+
+        window.sessionStorage.setItem("cat-selection", JSON.stringify({"item": value}));
+    }
+
+    window.addEventListener("load", function () {
+        // initialize selected categories
+        const value = getFromStorage();
+
+        for (let item of value) {
+            document.getElementById(`category-${item}`).classList.add("md-chip-highlighted");
+        }
+
+        if (value.length > 0) {
+            filterItems(); // trigger refetch
+        }
+    });
+</script>

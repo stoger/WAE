@@ -1,0 +1,114 @@
+<%class>
+# No attributes required
+</%class>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="static/css/header.css">
+</head>
+
+<div id="mySidenav" class="sidenav">
+  <!-- Close button -->
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" aria-label="Close Navigation">&times;</a>
+
+  <!-- Blogs link -->
+  <a href="javascript:void(0)" onclick="toggleYears(event)" aria-label="View Blogs">Blogs</a>
+
+
+<!-- Years Section with Categories -->
+<div id="years-submenu" class="submenu">
+% foreach my $year (@years) {
+    <!-- Years link -->
+    <a href="javascript:void(0)" class="year-link" onclick="toggleCategories(event, '<% $year %>')" aria-label="View Posts from <% $year %>">
+      <% $year %>
+    </a>
+
+     <%perl>
+      # Fetch categories for the current year
+      my $dbh = Ws24::DBI->dbh();
+      my $sth = $dbh->prepare("
+          SELECT DISTINCT c.id, c.name
+          FROM group18_categories c
+          JOIN group18_posts p ON c.id = p.category_id
+          WHERE YEAR(p.last_edited) = ?
+      ");
+      $sth->execute($year);
+      my @categories;
+      while (my $row = $sth->fetchrow_hashref) {
+          push @categories, $row;
+      }
+      </%perl>
+
+      <!-- Render categories -->
+      <div id="categories-submenu-<% $year %>" class="submenu">
+% foreach my $category (@categories) {
+          <a href="javascript:void(0)" class="category-link" onclick="togglePosts('<% $year %>', '<% $category->{id} %>')" aria-label="View Posts from <% $category->{name} %>">
+            <% $category->{name} %>
+          </a>
+
+          <%perl>
+          # Fetch posts for the current year-category combination
+          my $posts_sth = $dbh->prepare("
+              SELECT id, title
+              FROM group18_posts
+              WHERE category_id = ? AND YEAR(last_edited) = ?
+          ");
+          $posts_sth->execute($category->{id}, $year);
+          my @posts;
+          while (my $post = $posts_sth->fetchrow_hashref) {
+              push @posts, $post;
+          }
+          </%perl>
+
+          <!-- Render posts -->
+          <div id="posts-submenu-<% $year %>-<% $category->{id} %>" class="submenu">
+% foreach my $post (@posts) {
+              <a href="readPost?post_id=<% $post->{id} %>" class="post-link">
+                <% $post->{title} %>
+              </a>
+% }
+          </div>
+% }
+      </div>
+% }
+</div>
+
+
+  <!-- Other Static menu items -->
+  <a href="/wae18/editor" aria-label="Open Blog Editor" id="edit-btn">Blog Editor</a>
+  <a href="/wae18/login" aria-label="Login" id="login-btn">Login</a>
+  <a href="/wae18/user/logout" aria-label="Logout" id="logout-btn">Logout</a>
+</div>
+
+<script>
+  function toggleYears(event) {
+    event.stopPropagation(); // Prevent the click from propagating
+    const submenu = document.getElementById('years-submenu');
+    submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+}
+
+  function toggleCategories(event, year) {
+    event.stopPropagation(); // Prevent the click from propagating
+    const submenu = document.getElementById(`categories-submenu-${year}`);
+    submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+}
+
+function togglePosts(year, categoryId) {
+  event.stopPropagation(); // Prevent the click from propagating
+  const submenu = document.getElementById(`posts-submenu-${year}-${categoryId}`);
+  submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+}
+</script>
+
+<%init>
+# Database connection and fetch categories and years
+my $dbh = Ws24::DBI->dbh();
+
+# Fetch distinct years from posts
+my $years_sth = $dbh->prepare("SELECT DISTINCT YEAR(last_edited) AS year FROM group18_posts ORDER BY year DESC");
+$years_sth->execute();
+my @years;
+while (my $row = $years_sth->fetchrow_hashref) {
+    push @years, $row->{year};
+}
+
+</%init>

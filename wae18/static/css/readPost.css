@@ -1,0 +1,94 @@
+#title-container {
+    text-align: left;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    font-family: "Calibri", serif;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    min-height: 80%; /* Der Haupt-Container nimmt mindestens die Höhe der Seite ein */
+}
+
+#readPost-container {
+    flex-grow: 1; /* Sorgt dafür, dass der Container den verfügbaren Platz ausfüllt */
+    max-width: 85%; /* Begrenze die Breite */
+    min-width: 75%; /* Mindestbreite, damit die Box nicht zu schmal wird */
+    margin: 0 auto; /* Zentriere den Container horizontal */
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+#content-container {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #444;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    word-wrap: break-word;
+}
+
+#button-container {
+    display: flex;
+    justify-content: center; /* Horizontale Zentrierung */
+    align-items: center; /* Vertikale Zentrierung (falls der Container Höhe hat) */
+    padding-top: 10px;
+    gap: 15px;
+}
+
+#author-date-container {
+    font-size: 14px;
+    color: #888;
+    margin-top: 10px;
+    text-align: left;
+    font-family: "Calibri", serif;
+}
+
+.likes-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    float: right;
+}
+
+.like-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    height: 40px; /* Gleiche Höhe wie das Bild */
+    width: 70px; /* Gleiche Breite wie das Bild */
+}
+
+.like-button:hover {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.like-button img {
+    width: 50px;
+    transition: transform 0.2s ease;
+}
+
+.like-button img:hover {
+    transform: scale(1.2);
+}
+
+#like-count {
+    font-size: 32px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 36px;
+}
+
+

@@ -1,127 +1,163 @@
 <%class>
-  has 'docid';
+  # Mason-Attribute für unser Formular
+  has 'post_id';      # wird bei einem bestehenden Post gesetzt
   has 'title';
-  has 'content' => (default => "<font face=Verdana>bitte hier den Text eingeben.\n</font>\n");
-  has 'metatext';
-  has 'Save';
-  has 'insert' => (default => 0);
-  has 'parentid';
+  has 'content' => (default => "<p>Bitte hier den Inhalt eingeben.</p>\n");
+  has 'category_id';
+
+  # Interne Variable für Feedback
+  has 'msg' => (default => '');
 </%class>
 
+<script>
+    function validateForm() {
+        const title = document.querySelector('input[name="title"]').value.trim();
+        const editorContent = CKEDITOR.instances.content.getData().trim();
+        if (title.length === 0) {
+            alert("Der Titel darf nicht leer sein.");
+            return false; 
+        }
+        if (editorContent == "<p>Bitte hier den Inhalt eingeben.</p>") {
+          alert("Bitte ändern Sie den Text.");
+          return false;
+        }
+        if (editorContent.length === 0) {
+          alert("Bitte Text einfügen!");
+          return false;
+        }
+        return true; 
+    }
+</script>
+
+<head>
+  <title>Edit Post</title>
+  <link rel="stylesheet" type="text/css" media="screen" href="static/css/editor.css">
+</head>
+
+<div class="flex-container">
 <h2>
-% if (defined($.docid) && ($.insert==0)) {
-Dokument <% $.docid %> editieren
+% my $pid = $.post_id || '';
+% if ($pid) {
+  Post (ID <% $pid %>) bearbeiten
 % } else {
-Neues Dokument anlegen
+  Neuen Post anlegen
 % }
 </h2>
-% if (length($msg)) {
-<p style="color:red;font-size:10px;"><% $msg %></p>
+
+% if (length($.msg)) {
+<p style="color:red;font-size:10px;"><% $.msg %></p>
 % }
-<form name="editform"
-method="post" enctype="application/x-www-form-urlencoded">
 
-<input type="hidden" name="docid" value="<% $.docid %>">
-<input type="hidden" name="insert" value="<% $.insert %>">
+<form name="editform" method="POST"
+  action="<% $.post_id ? 'posts/update' : 'posts/insert' %>"
+  enctype="application/x-www-form-urlencoded"
+>
+  <!-- ID mitgeben, falls vorhanden -->
+  <input type="hidden" name="post_id" value="<% $.post_id %>">
+<div class="flex-item">
+  <table width="100%" cellspacing="1" cellpadding="4" border="0">
+    <colgroup>
+      <col align="right" valign="top">
+      <col align="left">
+    </colgroup>
 
-<TABLE WIDTH="100%" CELLSPACING=1 CELLPADDING=4 BORDER=0>
-<COLGROUP>
-<COL ALIGN="right" VALIGN="top">
-<COL ALIGN="left">
-</COLGROUP>
-<TR>
-<TD>Titel:</TD>
-<TD><input type="text" name="title" value="<% $.title %>" size="50" /></TD> <!-- Filter |h ?? -->
-</TR>
+    <!-- Titel -->
+    <tr>
+      <td><b>Titel:</b></td>
+      <td>
+        <input type="text" name="title" value="<% $.title %>" size="50" />
+      </td>
+    </tr>
 
-<TR>
-<TD>Parent-ID:</TD>
-<TD>
-<%doc>
-<%  $cgi->popup_menu(-name      =>'parentid',
-                       -values    => [ sort keys %docTitleAndIds ],
-                       -default   => $.parentid,
-                       -labels    => \%docTitleAndIds)
-  %> aktuell: <% $docTitleAndIds{$.parentid} %>
-</%doc>
-  <input type="text" name="parentid" value="<% $.parentid %>" size="3" />
+    <!-- Kategorie-Auswahl (Dropdown) -->
+    <tr>
+      <td>Kategorie:</td>
+      <td>
+        <% $cgi->popup_menu(
+          -name    => 'category_id',
+          -values  => [ sort {$a <=> $b} keys %categories ],
+          -default => $.category_id,
+          -labels  => \%categories
+        ) %>
+      </td>
+    </tr>
 
-</TD>
-</TR>
-<TR>
-<TD ALIGN=left COLSPAN=2>
-  <textarea name="content" id="content"><% $.content %></textarea>
-<script>
-	// Replace the <textarea id="content"> with a CKEditor
-	// instance, using default configuration.
-	CKEDITOR.replace('content',{
-		width   : '560px',
-		height  : '400px'
-	});
-</script>
-<BR>
-</TD>
-</TR>
-
-<TR>
-<TD COLSPAN=2 ALIGN=center>
-<BR>
-<input type="submit" value="&Auml;nderungen speichern" name="Save">
-&nbsp;&nbsp;&nbsp;
-<input type="reset" value="&Auml;nderungen verwerfen" name="Cancel"> <!-- onClick="window.close()" -->
-<BR>
-<BR>
-</TD>
-</TR>
-</TABLE>
-
+    <!-- Content -->
+    <tr>
+      <td colspan="2">
+    <div class="editor-wrapper">
+        <textarea name="content" id="content"><% $.content %></textarea>
+        <script>
+            CKEDITOR.replace('content', {
+              toolbar: [
+                  { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+                  { name: 'paragraph', items: ['Format', 'Styles'] },
+                  { name: 'insert', items: ['Image'] }
+              ],
+              uiColor: '#E3F2FD',
+              height: 480,
+              width: '100%',
+              contentsCss: '/static/css/editor-content.css' // Pfad zur CSS-Datei
+            });
+        </script>
+    </div>
+</td>
+    </tr>
+    <!-- Absende-Buttons -->
+    <tr>
+      <td colspan="2">
+        <br>
+        <button type="submit" name="Save" class="btn btn-primary" onclick="return validateForm();">Speichern</button>
+        &nbsp;&nbsp;&nbsp;
+        <button type="button" name="Cancel" class="btn btn-secondary" onclick="history.back();">Verwerfen</button>
+        <br><br>
+      </td>
+    </tr>
+  </table>
+</div>
 </form>
 
+</div>
 <%init>
-use Data::Dumper;
-use CGI;
-
-my $dbh = Ws24::DBI->dbh();
-my $cgi = new CGI;
-
-my $msg = "Welcome to the WCM content editor.";
-my %docTitleAndIds = ('0', 'top level document');
-
-my $sth = $dbh->prepare("SELECT docid, title from schranz_cms");
-$sth->execute();
-while (my $res = $sth->fetchrow_hashref()) {
-  $docTitleAndIds{$res->{docid}} = $res->{title};
+# if user not logged in, cannot create/edit blog
+unless (defined $m->session && $m->session->{user_id} > 0) {
+    my $msg = "Sie müssen eingeloggt sein, um posten zu können.";
+    return $m->redirect("/wae18/login?msg=$msg");
 }
 
-if ($.Save) {
-# Speichern wurde gedr�ckt...
-  if ($.insert == 1) {
-  # Datensatz aus Formularfeldern in Datenbank einf�gen
-    my $sth = $dbh->prepare("INSERT INTO schranz_cms (docid,content,metatext,title,parent,created) values (?,?,?,?,?,NOW())");
-    $sth->execute($.docid,$.content,$.metatext,$.title,(($.parentid > 0)?$.parentid:0));
-    $msg = "Datensatz ". $.docid ." neu in DB aufgenommen.".$sth->rows();
-#    $.insert(0);
-  } else {
-  # Datensatz in Datenbank �ndern
-    my $sth = $dbh->prepare("UPDATE schranz_cms SET content = ?, title = ?, parent = ? WHERE docid = ?");
-    $sth->execute($.content,$.title,$.parentid,$.docid);
-    $msg = "Datensatz " . $.docid ." in DB ver&auml;ndert.".$sth->rows();
-  }
-} elsif ($.docid) {
-# id erkannt, daten aus Datenbank lesen
-  my $sth = $dbh->prepare("SELECT docid, title, content, created, parent, metatext from schranz_cms WHERE docid = ?");
-  $sth->execute($.docid);
-  my $res = $sth->fetchrow_hashref();
-  $.content($res->{content} || $.content);
-  $.title($res->{title});
-  $.parentid($res->{parent});
-  $msg = "Datensatz " . $.docid . " aus DB gelesen.".((defined($res) && scalar(keys(%$res)))?1:0);
-} else {
-# keine ID, neues Dokument erstellen
-  my $sth = $dbh->prepare("SELECT max(docid) as maxdocid FROM schranz_cms");
+use CGI;
+my $cgi = CGI->new;
+my $dbh = Ws24::DBI->dbh();
+
+# 1) Kategorien für Dropdown laden
+my %categories;
+{
+  my $sth = $dbh->prepare("SELECT id, name FROM group18_categories");
   $sth->execute();
+  while (my $row = $sth->fetchrow_hashref) {
+    $categories{$row->{id}} = $row->{name};
+  }
+}
+
+# 2) Wenn post_id übergeben wurde => Post aus DB lesen
+if ($.post_id) {
+  my $sth = $dbh->prepare(
+    "SELECT id, title, content, category_id
+     FROM group18_posts
+     WHERE id = ?"
+  );
+  $sth->execute($.post_id);
   my $res = $sth->fetchrow_hashref();
-  $.docid($res->{maxdocid}+1);
-  $.insert(1);
+  if ($res) {
+    $.title($res->{title});
+    $.content($res->{content});
+    $.category_id($res->{category_id});
+    #$.msg("Post $res->{id} wurde aus DB gelesen.");
+  } else {
+    #$.msg("Post mit ID $.post_id nicht gefunden.");
+  }
+} else {
+  # Kein post_id
+  #$.msg("Neuer Post (ID wird automatisch vergeben) kann jetzt angelegt werden.");
 }
 </%init>

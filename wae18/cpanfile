@@ -1,2 +1,0 @@
-requires 'Mason';
-requires 'Plack';
