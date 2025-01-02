@@ -1,0 +1,14 @@
+CREATE USER IF NOT EXISTS 'mason' IDENTIFIED BY 'njumki';
+CREATE USER IF NOT EXISTS 'tuv' IDENTIFIED BY 'tuv24';
+
+CREATE DATABASE IF NOT EXISTS sessiondb;
+CREATE DATABASE IF NOT EXISTS tuv;
+
+GRANT ALL PRIVILEGES ON sessiondb.* TO 'mason';
+GRANT ALL PRIVILEGES ON tuv.* TO 'tuv';
+
+use sessiondb;
+CREATE TABLE `sessions` (
+    id           CHAR(72) PRIMARY KEY,
+    session_data TEXT
+);

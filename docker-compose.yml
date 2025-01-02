@@ -1,0 +1,42 @@
+version: '3.0'
+
+services:
+  server:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # edit this to specify which group-project to copy into container
+        project_dir: wae18
+    container_name: WAE-server
+    restart: unless-stopped
+    ports:
+      - 8082:5000
+    depends_on:
+      - mysql-db
+    networks:
+      - internal
+  mysql-db:
+    image: mysql
+    restart: always
+    command: --require_secure_transport=OFF # disable ssl/tls
+    container_name: mysqldb
+    environment:
+      MYSQL_ROOT_PASSWORD: tuv24
+    networks:
+      - internal
+  mysql-init:
+    image: mysql
+    restart: no
+    container_name: SQLInit
+    command: /bin/sh /tmp/db/init.sh
+    volumes:
+      - ./db:/tmp/db
+    networks:
+      - internal
+    depends_on:
+      - mysql-db
+
+networks:
+  internal:
+    driver: bridge
