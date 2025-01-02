@@ -1,8 +1,5 @@
 #!/usr/bin/bash
 
-# Start the main process
-# mysqld --require_secure_transport=OFF &
-
 # Wait for the database to be ready (example for MySQL)
 DB_HOST=${DB_HOST:-"mysqldb"}
 DB_USER=${DB_USER:-"root"}

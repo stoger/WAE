@@ -2,12 +2,7 @@ version: '3.0'
 
 services:
   server:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-      args:
-        # edit this to specify which group-project to copy into container
-        project_dir: wae18
+    build: .
     container_name: WAE-server
     restart: unless-stopped
     ports:
@@ -16,6 +11,10 @@ services:
       - mysql-db
     networks:
       - internal
+    volumes:
+      # edit this to specify which group-project to copy into container
+      # ONLY change `wae18` below to your own group!
+      - ./wae18:/container/app/comps/wae18
   mysql-db:
     image: mysql
     restart: always

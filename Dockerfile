@@ -25,11 +25,11 @@ COPY conf/local.cfg conf/
 # copy actual projects into container
 COPY wae99 comps/wae99
 
-ARG project_dir
-COPY $project_dir comps/$project_dir
+# ARG project_dir
+# COPY $project_dir comps/$project_dir
 
 # below is for testing if plackup won't start, e.g. halt container to allow exec-ing into it
 # CMD ["tail", "-f", "/dev/null"]
 
 # Standardbefehl, um Plack zu starten
-CMD ["plackup", "--host", "0.0.0.0", "--port", "5000", "bin/app.psgi"]
+CMD ["plackup", "--host", "0.0.0.0", "--port", "5000", "-R", "/container/app/comps", "bin/app.psgi"]

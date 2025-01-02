@@ -9,13 +9,13 @@ use Plack::Session::Store::DBI;
 
 
 # Load modules configured in server.load_modules
-#
+# Don't edit
 $poet->app_class('Server')->load_startup_modules();
 
 builder {
-
+    
     # Add Plack middleware here
-    #
+    # default conf start - DO NOT EDIT
     if ( $conf->is_development ) {
         enable "StackTrace";
         enable "Debug";
@@ -30,18 +30,19 @@ builder {
     enable "Session",
       store => Plack::Session::Store::DBI->new(
        get_dbh => sub { Ws24::DBI->session_dbh }
-      );
-      # store => Plack::Session::Store::Cache->new(
-      #   cache => CHI->new(driver => "Memory", global => 1)
-      # );
+      )
+    ;
+    # end default conf
 
-    enable "Plack::Middleware::Static", path => sub {s!/wae18/static!static/!}, root => "comps/wae18";
-    enable "Plack::Middleware::Static", path => sub {s!/wae99/static!static/!}, root => "comps/wae99";
-    enable "Plack::Middleware::Static", path => sub {s!/static!!}, root => "static/";
+    # handle static files for any sub-project (group-related ones like wae99)
+    enable "Plack::Middleware::Static", path => sub {s!/(wae\d+)/static!comps/$1/static!}, root => ".";
+    # serve default-static files (like ckeditor specifics)
+    enable "Plack::Middleware::Static", path => sub {s!/static!static!}, root => ".";
     
     sub {
         my $psgi_env = shift;
 
+        # not sure why this is needed, but otherwise e.g. `/wae99` won't load css & `/wae99/` won't load index.mc
         if ($psgi_env->{PATH_INFO} =~ m{/$}) {
           $psgi_env->{PATH_INFO} = substr $psgi_env->{PATH_INFO}, 0, -1;
         }
